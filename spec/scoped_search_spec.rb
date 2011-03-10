@@ -1,12 +1,18 @@
 require "spec_helper"
 
-%w(blahblah foo bar pipo waouhhh pipomolo).each do |title|
-  Post.create(:title => title, :body => "blah", :published => title.include?("pipo"))
-end
-
-Post.create(:title => "test multi params", :body => "this is to test multi params, whaaaa")
-
 describe 'ScopedSearch' do
+  before do
+    %w(blahblah foo bar pipo waouhhh pipomolo).each do |title|
+      Post.create(:title => title, :body => "blah", :published => title.include?("pipo"))
+    end
+
+    Post.create(:title => "test multi params", :body => "this is to test multi params, whaaaa")
+  end
+
+  after do
+    Post.destroy_all
+  end  
+  
   it 'should respond to scoped_search and return a ScopedSearch::Base object' do
     Post.should respond_to(:scoped_search)
     Post.scoped_search.should be_a(ScopedSearch::Base)
@@ -63,24 +69,30 @@ describe 'ScopedSearch' do
       @search.all.should have(2).elements
     end
     
-    it 'should be possible to search in a multi params scope' do
-      @search = Post.scoped_search
-      
-      @search.retrieve_in_title_and_body = ["test", "whaaaa"]
-      @search.retrieve_in_title_and_body_multi_params = true
-      @search.count.should == 1
-      
-      @search = Post.scoped_search({ :retrieve_in_title_and_body => ["test", "whaaaa"], :retrieve_in_title_and_body_multi_params => "true" })
-      @search.count.should == 1
-    end
+    context "in a multi params scope" do
     
+      it 'should allow setting attributes on @search' do
+        @search = Post.scoped_search
+      
+        @search.retrieve_in_title_and_body = ["test", "whaaaa"]
+        @search.retrieve_in_title_and_body_multi_params = true
+        @search.count.should == 1
+      end
+      
+      it 'should allow passing an option during initialization' do
+        @search = Post.scoped_search({ :retrieve_in_title_and_body => ["test", "whaaaa"], :retrieve_in_title_and_body_multi_params => true })
+        @search.count.should == 1        
+      end
+      
+    end
+        
     it 'should be possible to search in a scope that wants an Array' do
       @search = Post.scoped_search
 
-      @search.retrieve_ids = ["3", "4"]
+      @search.retrieve_ids = [Post.first.id, Post.last.id]
       @search.count.should == 2
       
-      @search = Post.scoped_search({ :retrieve_ids => ["3", "4"] })
+      @search = Post.scoped_search({ :retrieve_ids => [Post.first.id, Post.last.id] })
       @search.count.should == 2
     end
   end

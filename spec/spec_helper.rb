@@ -1,7 +1,8 @@
 require 'ruby-debug'
 require 'rspec'
 
-require "active_record"
+require 'rails/all'   # overkill, but lots of headaches trying to pick and choose needed actionpack components
+require "sqlite3"
 
 ActiveRecord::Schema.verbose = false
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
