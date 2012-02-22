@@ -112,10 +112,8 @@ class ScopedSearch
           end
         else
           columns_names.each do |column_name|
-                      scope :"ascend_by_#{column_name}"#,  order_by([column_name.to_sym, :asc])
-            scope :"descend_by_#{column_name}"#, order_by([column_name.to_sym, :desc])
-            #scope :"ascend_by_#{column_name}",  order("#{column_name} asc")
-            #scope :"descend_by_#{column_name}", order("#{column_name} desc")
+            scope :"ascend_by_#{column_name}",  order("#{column_name} asc")
+            scope :"descend_by_#{column_name}", order("#{column_name} desc")
           end
         end
       end
