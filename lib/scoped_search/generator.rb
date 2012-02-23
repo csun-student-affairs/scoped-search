@@ -12,14 +12,14 @@ class ScopedSearch
       #     generate_search_scopes :name, :email
       def generate_search_scopes(*args)
         # TODO: add scoped_search_generator_opts[:orm]
-        if defined?(Mongoid) && self <= Mongoid::Document        
+        #if defined?(Mongoid) && self <= Mongoid::Document        
           field_names = [*args]
           field_names = :all if field_names.blank?
           @scoped_search_generator_opts = {:for => field_names}
           self.send :include, ScopedSearch::Generator
-        else
-          raise UnsupportedORMError.new "Sorry, generate_search_scopes is not supported yet for ActiveRecord. Coming soon. In the meanwhile, please define your own scopes inside your ActiveRecord model."
-        end
+        #else
+         # raise UnsupportedORMError.new "Sorry, generate_search_scopes is not supported yet for ActiveRecord. Coming soon. In the meanwhile, please define your own scopes inside your ActiveRecord model."
+        #end
       end
     end
   end
